@@ -55,6 +55,10 @@ CronBuilder.prototype.get = function (measureOfTime) {
 };
 
 CronBuilder.prototype.set = function (value, measureOfTime) {
+    if (!Array.isArray(value) || !this.expression[measureOfTime]) {
+        return;
+    }
+
     this.expression[measureOfTime] = value;
 
     return this.expression[measureOfTime];
