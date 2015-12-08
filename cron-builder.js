@@ -22,4 +22,18 @@ CronBuilder.prototype.build = function () {
     return expressionArray.join(' ');
 };
 
+CronBuilder.prototype.addValue = function (value, measureOfTime) {
+    if (!this.expression[measureOfTime]) {
+        return;
+    }
+
+    if (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*') {
+        this.expression[measureOfTime] = [value];
+    } else {
+        if (this.expression[measureOfTime].indexOf(value) < 0) {
+            this.expression[measureOfTime].push(value);
+        }
+    }
+};
+
 module.exports = CronBuilder;
