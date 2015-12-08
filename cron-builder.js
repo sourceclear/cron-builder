@@ -36,4 +36,18 @@ CronBuilder.prototype.addValue = function (value, measureOfTime) {
     }
 };
 
+CronBuilder.prototype.removeValue = function (value, measureOfTime) {
+    if (!this.expression[measureOfTime] || (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*')) {
+        return;
+    }
+
+    this.expression[measureOfTime] = this.expression[measureOfTime].filter(function (timeValue) {
+       return value !== timeValue;
+    });
+
+    if (!this.expression[measureOfTime].length) {
+        this.expression[measureOfTime] = ['*'];
+    }
+};
+
 module.exports = CronBuilder;
