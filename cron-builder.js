@@ -50,4 +50,14 @@ CronBuilder.prototype.removeValue = function (value, measureOfTime) {
     }
 };
 
+CronBuilder.prototype.get = function (measureOfTime) {
+    return this.expression[measureOfTime];
+};
+
+CronBuilder.prototype.set = function (value, measureOfTime) {
+    this.expression[measureOfTime] = value;
+
+    return this.expression[measureOfTime];
+};
+
 module.exports = CronBuilder;
