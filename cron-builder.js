@@ -64,7 +64,7 @@ CronBuilder.prototype.removeValue = function (value, measureOfTime) {
 };
 
 CronBuilder.prototype.get = function (measureOfTime) {
-    return this.expression[measureOfTime];
+    return this.expression[measureOfTime].join(',');
 };
 
 CronBuilder.prototype.set = function (value, measureOfTime) {
@@ -74,7 +74,7 @@ CronBuilder.prototype.set = function (value, measureOfTime) {
 
     this.expression[measureOfTime] = value;
 
-    return this.expression[measureOfTime];
+    return this.expression[measureOfTime].join(',');
 };
 
 module.exports = CronBuilder;
