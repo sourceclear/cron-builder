@@ -31,11 +31,21 @@ Add or remove values one at a time:
 ```JavaScript
 cronExp.addValue('2', 'hour');
 cronExp.addValue('4', 'monthOfTheYear');
+cronExp.addValue('10', 'monthOfTheYear');
 cronExp.build();
-// '5,35 2 * 4 * *'
+// '5,35 2 * 4,10 * *'
 
 cronExp.removeValue('5', 'minute');
 cronExp.build();
-// '35 2 * 4 * *'
+// '35 2 * 4,10 * *'
 ```
 
+If you prefer to work with the expression object directly, use getAll and setAll:
+```JavaScript
+var exp = cronExp.getAll();
+// {minute: ['35'], hour: ['2'], dayOfTheMonth: ['*'], monthOfTheYear: ['4','10'] ...}
+exp.dayOfTheMonth = ['7','14','21','28'];
+cronExp.setAll(exp);
+cronExp.build();
+// '35 2 7,14,21,28 4,10 * *'
+```
