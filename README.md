@@ -40,10 +40,10 @@ cronExp.build();
 // '35 2 * 4,10 * *'
 ```
 
-If you prefer to work with the expression object directly, use getAll and setAll:
+If you prefer to work with the expression object directly, use `getAll` and `setAll`:
 ```JavaScript
 var exp = cronExp.getAll();
-// {minute: ['35'], hour: ['2'], dayOfTheMonth: ['*'], monthOfTheYear: ['4','10'] ...}
+// {minute: ['35'], hour: ['2'], dayOfTheMonth: ['*'], monthOfTheYear: ['4','10'], ...}
 exp.dayOfTheMonth = ['7','14','21','28'];
 cronExp.setAll(exp);
 cronExp.build();
