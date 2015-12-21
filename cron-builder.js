@@ -1,12 +1,25 @@
-function CronBuilder () {
-    this.expression = {
-        minute: ['*'],
-        hour: ['*'],
-        dayOfTheMonth: ['*'],
-        monthOfTheYear: ['*'],
-        dayOfTheWeek: ['*'],
-        year: ['*']
-    };
+function CronBuilder (initialExpression) {
+    var initialArray;
+
+    if (initialExpression) {
+        initialArray = initialExpression.split(' ');
+        this.expression = {};
+        this.expression.minute = [initialArray[0]] || ['*'];
+        this.expression.hour = [initialArray[1]] || ['*'];
+        this.expression.dayOfTheMonth = [initialArray[2]] || ['*'];
+        this.expression.monthOfTheYear = [initialArray[3]] || ['*'];
+        this.expression.dayOfTheWeek = [initialArray[4]] || ['*'];
+        this.expression.year = [initialArray[5]] || ['*'];
+    } else {
+        this.expression = {
+            minute: ['*'],
+            hour: ['*'],
+            dayOfTheMonth: ['*'],
+            monthOfTheYear: ['*'],
+            dayOfTheWeek: ['*'],
+            year: ['*']
+        };
+    }
 }
 
 CronBuilder.prototype.build = function () {
