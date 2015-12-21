@@ -77,4 +77,17 @@ CronBuilder.prototype.set = function (value, measureOfTime) {
     return this.expression[measureOfTime].join(',');
 };
 
+CronBuilder.prototype.getAll = function () {
+    return this.expression;
+};
+
+CronBuilder.prototype.setAll = function (expToSet) {
+    // lots of checks to do here in order to determine if the expToSet is a valid cron expression
+    if (Object.keys(expToSet).length > 6) {
+      return 'Not a valid cron string; too many values';
+    }
+
+    this.expression = expToSet;
+};
+
 module.exports = CronBuilder;
