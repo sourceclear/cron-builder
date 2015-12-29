@@ -4,5 +4,12 @@
   "author": "Tyler Waneka <twwaneka@gmail.com> (http://tylerwaneka.com)",
   "version": "0.1.0",
   "main": "cron-builder.js",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
 }
