@@ -5,8 +5,17 @@ var chai = require('chai'),
 describe('cron-builder', function () {
     var cron;
 
-    it('defaults to "* * * * * *" when initialized without arguements', function () {
+    it('defaults to "* * * * * *" when initialized without arguments', function () {
         cron = new cb();
+        expect(cron.expression.minute).to.eql(['*']);
+        expect(cron.expression.hour).to.eql(['*']);
+        expect(cron.expression.dayOfTheMonth).to.eql(['*']);
+        expect(cron.expression.monthOfTheYear).to.eql(['*']);
+        expect(cron.expression.dayOfTheWeek).to.eql(['*']);
+        expect(cron.expression.year).to.eql(['*']);
+    });
+
+    it('returns a working cron expression when calling .build()', function () {
         expect(cron.build()).to.equal('* * * * * *');
     });
 });
