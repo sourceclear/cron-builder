@@ -46,6 +46,12 @@ describe('cron-builder', function () {
         cron.set(['2015-2025'], 'year');
         expect(cron.build()).to.equal('10,30,50 6,18 1,15 * 1-5 2015-2025');
     });
+
+    it('gets a single value', function () {
+        cron = new cb();
+        cron.set(['30'], 'minute');
+        expect(cron.get('minute')).to.equal('30');
+    });
 });
 
 //var cb = require('./cron-builder.js'),
