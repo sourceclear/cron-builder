@@ -168,8 +168,12 @@ CronBuilder.prototype.addValue = function (value, measureOfTime) {
 };
 
 CronBuilder.prototype.removeValue = function (value, measureOfTime) {
-    if (!this.expression[measureOfTime] || (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*')) {
-        return;
+    if (!this.expression[measureOfTime]) {
+        return 'Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".';
+    }
+
+    if (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*') {
+        return 'The value for "' + measureOfTime + '" is already at the default "*"';
     }
 
     this.expression[measureOfTime] = this.expression[measureOfTime].filter(function (timeValue) {
