@@ -186,12 +186,24 @@ CronBuilder.prototype.removeValue = function (value, measureOfTime) {
 };
 
 CronBuilder.prototype.get = function (measureOfTime) {
+    if (!this.expression[measureOfTime]) {
+        return 'Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".';
+    }
+
     return this.expression[measureOfTime].join(',');
 };
 
 CronBuilder.prototype.set = function (value, measureOfTime) {
-    if (!Array.isArray(value) || !this.expression[measureOfTime]) {
-        return;
+    var valueCheck;
+
+    if (!Array.isArray(value)) {
+        return 'Invalid value; Value must be in the form of an Array.';
+    }
+
+    valueCheck = valueValidator(value, measureOfTime);
+
+    if (!valueCheck.valid) {
+        return valueCheck;
     }
 
     this.expression[measureOfTime] = value;
