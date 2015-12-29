@@ -19,10 +19,32 @@ describe('cron-builder', function () {
         expect(cron.build()).to.equal('* * * * * *');
     });
 
-    it('sets a single value when called correctly', function () {
+    it('sets a single value', function () {
         cron = new cb();
-        expect(cron.set(['5'], 'minute')).to.equal('5');
-        expect(cron.build()).to.equal('5 * * * * *');
+        expect(cron.set(['5'], 'hour')).to.equal('5');
+        expect(cron.build()).to.equal('* 5 * * * *');
+    });
+
+    it('sets multiple values at once', function () {
+        cron = new cb();
+        expect(cron.set(['0', '10', '20', '30', '40', '50'], 'minute')).to.equal('0,10,20,30,40,50');
+        expect(cron.build()).to.equal('0,10,20,30,40,50 * * * * *');
+    });
+
+    it('sets a range', function () {
+        cron = new cb();
+        expect(cron.set(['5-7'], 'dayOfTheWeek')).to.equal('5-7');
+        expect(cron.build()).to.equal('* * * * 5-7 *');
+    });
+
+    it('multiple sets build the cron string accurately', function () {
+        cron = new cb();
+        cron.set(['10', '30', '50'], 'minute');
+        cron.set(['6', '18'], 'hour');
+        cron.set(['1', '15'], 'dayOfTheMonth');
+        cron.set(['1-5'], 'dayOfTheWeek');
+        cron.set(['2015-2025'], 'year');
+        expect(cron.build()).to.equal('10,30,50 6,18 1,15 * 1-5 2015-2025');
     });
 });
 
