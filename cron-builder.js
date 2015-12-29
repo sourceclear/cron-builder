@@ -1,9 +1,50 @@
-expressionValidator = function (expression) {
-    var validateResponse = {valid: true};
+expressionObjectValidator = function (expression) {
+    var validateResponse = {valid: true},
+        valueCheck;
 
     if (Object.keys(expression).length > 6) {
         validateResponse.valid = false;
-        validateResponse.message = 'Not a valid cron expression; limited to 6 values.';
+        validateResponse.message = 'Invalid cron expression; limited to 6 values.';
+        return validateResponse;
+    }
+
+    for (var measureOfTime in expression) {
+        if (expression.hasOwnProperty(measureOfTime)) {
+            valueCheck = valueValidator(expression[measureOfTime], measureOfTime);
+            if (!valueCheck.valid) {
+                validateResponse = valueCheck;
+                break;
+            }
+        }
+    }
+
+    return validateResponse;
+};
+
+expressionStringValidator = function (expression) {
+    var validateResponse = {valid: true},
+        valueCheck,
+        measureOfTimeMap = {
+            0: 'minute',
+            1: 'hour',
+            2: 'dayOfTheMonth',
+            3: 'monthOfTheYear',
+            4: 'dayOfTheWeek',
+            5: 'year'
+        };
+
+    if (expression.length > 6) {
+        validateResponse.valid = false;
+        validateResponse.message = 'Invalid cron expression; limited to 6 values.';
+        return validateResponse;
+    }
+
+    for (var i = 0; i < expression.length; i++) {
+        valueCheck = valueValidator(expression[i], measureOfTimeMap[i]);
+        if (!valueCheck.valid) {
+            validateResponse = valueCheck;
+            break;
+        }
     }
 
     return validateResponse;
@@ -24,7 +65,7 @@ valueValidator = function (value, measureOfTime) {
 
     if (!validatorObj[measureOfTime]) {
         validateResponse.valid = false;
-        validateResponse.message = 'Not a valid measureOfTime; Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".'
+        validateResponse.message = 'Invalid measureOfTime; Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".'
         return validateResponse;
     }
 
@@ -42,22 +83,22 @@ valueValidator = function (value, measureOfTime) {
 
             if (!range[0] || range[0] < validatorObj[measureOfTime].min) {
                 validateResponse.valid = false;
-                validateResponse.message = 'Not a valid value; bottom of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].min + '.';
+                validateResponse.message = 'Invalid value; bottom of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].min + '.';
             }
 
             if (!range[1] || range[1] > validatorObj[measureOfTime].max) {
                 validateResponse.valid = false;
-                validateResponse.message = 'Not a valid value; top of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].max + '.';
+                validateResponse.message = 'Invalid value; top of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].max + '.';
             }
         } else {
 
             if (parseInt(value) < validatorObj[measureOfTime].min) {
                 validateResponse.valid = false;
-                validateResponse.message = 'Not a valid value; given value is not valid for "' + measureOfTime + '". Minimum value is "' + validatorObj[measureOfTime].min + '".';
+                validateResponse.message = 'Invalid value; given value is not valid for "' + measureOfTime + '". Minimum value is "' + validatorObj[measureOfTime].min + '".';
             }
             if (parseInt(value) > validatorObj[measureOfTime].max) {
                 validateResponse.valid = false;
-                validateResponse.message = 'Not a valid value; given value is not valid for "' + measureOfTime + '". Maximum value is "' + validatorObj[measureOfTime].max + '".';
+                validateResponse.message = 'Invalid value; given value is not valid for "' + measureOfTime + '". Maximum value is "' + validatorObj[measureOfTime].max + '".';
             }
         }
     }
@@ -66,10 +107,18 @@ valueValidator = function (value, measureOfTime) {
 };
 
 function CronBuilder (initialExpression) {
-    var initialArray;
+    var initialArray,
+        expressionCheck;
 
     if (initialExpression) {
         initialArray = initialExpression.split(' ');
+
+        // check to see if initial expression is valid
+        expressionCheck = expressionStringValidator(initialArray);
+        if (!expressionCheck.valid) {
+            throw expressionCheck.message;
+        }
+
         this.expression = {};
         this.expression.minute = initialArray[0] ? [initialArray[0]] : ['*'];
         this.expression.hour = initialArray[1] ? [initialArray[1]] : ['*'];
@@ -151,7 +200,7 @@ CronBuilder.prototype.getAll = function () {
 };
 
 CronBuilder.prototype.setAll = function (expToSet) {
-    var expressionCheck = expressionValidator(expToSet);
+    var expressionCheck = expressionObjectValidator(expToSet);
 
     if (!expressionCheck.valid) {
         return expressionCheck;
