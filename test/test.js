@@ -18,6 +18,12 @@ describe('cron-builder', function () {
     it('returns a working cron expression when calling .build()', function () {
         expect(cron.build()).to.equal('* * * * * *');
     });
+
+    it('sets a single value when called correctly', function () {
+        cron = new cb();
+        expect(cron.set(['5'], 'minute')).to.equal('5');
+        expect(cron.build()).to.equal('5 * * * * *');
+    });
 });
 
 //var cb = require('./cron-builder.js'),
