@@ -1,4 +1,5 @@
 expressionObjectValidator = function (expression) {
+    // don't care if it's less than 6, we'll just set those to the default '*'
     if (Object.keys(expression).length > 6) {
         throw new Error('Invalid cron expression; limited to 6 values.');
     }

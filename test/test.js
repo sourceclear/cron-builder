@@ -105,6 +105,23 @@ describe('cron-builder', function () {
         expect(getAllResponse).to.have.property('dayOfTheWeek').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
         expect(getAllResponse).to.have.property('year').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
     });
+
+    it('sets the entire object when setAll is called', function () {
+        cron = new cb();
+        var getAllResponse = cron.getAll();
+        getAllResponse.hour = ['13'];
+        getAllResponse.year = ['2015-2020'];
+        getAllResponse.dayOfTheWeek = ['1,3,5,7'];
+        cron.setAll(getAllResponse);
+        expect(cron.build()).to.equal('* 13 * * 1,3,5,7 2015-2020');
+    });
+
+    it('validates setting all with too many keys in the expression object', function () {
+        cron = new cb();
+        var getAllResponse = cron.getAll();
+        getAllResponse.tooManyMeasuresOfTime = ['13'];
+        expect(function () { cron.setAll(getAllResponse) }).to.throw(Error);
+    });
 });
 
 //var cb = require('./cron-builder.js'),
