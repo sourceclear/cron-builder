@@ -1,0 +1,21 @@
+{
+  "name": "cron-builder",
+  "main": "cron-builder.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/waneka/cron-builder",
+  "authors": [
+    "waneka <twwaneka@gmail.com>"
+  ],
+  "description": "simple API for building cron expressions",
+  "keywords": [
+    "cron"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
