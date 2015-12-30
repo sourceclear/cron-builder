@@ -74,7 +74,15 @@ cronExp.build();
 - cron-builder does not currently support using `/` syntax to indicate values that are repeated. Instead of using `*/15`, use the verbose form `0,15,30,45`.
 - cron-builder requires using numeric representations of days of the week and months of the year. So instead of using `Feb,Mar,Apr` just use `2,3,4`.
 
-##### License
+### Contribute
+Easy!
+```
+npm install
+npm test
+```
+Pull requests and issues appreciated!
+
+### License
 
 The MIT License (MIT)
 
