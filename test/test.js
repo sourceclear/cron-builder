@@ -151,6 +151,11 @@ describe('cron-builder', function () {
         cron.addValue('5', 'dayOfTheMonth');
         expect(cron.get('dayOfTheMonth')).to.equal('5,15');
     });
+
+    it('validates an invalid value when adding', function () {
+        cron = new cb();
+        expect(function () { cron.addValue('62', 'minute') }).to.throw(Error);
+    });
 });
 
 //var cb = require('./cron-builder.js'),
