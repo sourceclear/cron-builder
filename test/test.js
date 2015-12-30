@@ -122,6 +122,13 @@ describe('cron-builder', function () {
         getAllResponse.tooManyMeasuresOfTime = ['13'];
         expect(function () { cron.setAll(getAllResponse) }).to.throw(Error);
     });
+
+    it('validates setting with an incorrect value with setAll', function () {
+        cron = new cb();
+        var getAllResponse = cron.getAll();
+        getAllResponse.hour = ['28'];
+        expect(function () { cron.setAll(getAllResponse) }).to.throw(Error);
+    });
 });
 
 //var cb = require('./cron-builder.js'),
