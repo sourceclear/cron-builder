@@ -156,6 +156,25 @@ describe('cron-builder', function () {
         cron = new cb();
         expect(function () { cron.addValue('62', 'minute') }).to.throw(Error);
     });
+
+    it('removes a value that exists with other values', function () {
+        cron = new cb();
+        cron.set(['2', '4'], 'dayOfTheWeek');
+        cron.removeValue('4', 'dayOfTheWeek');
+        expect(cron.get('dayOfTheWeek')).to.equal('2');
+    });
+
+    it('resets the value to the default "*" when removing the only value', function () {
+        cron = new cb();
+        cron.set(['2020'], 'year');
+        cron.removeValue('2020', 'year');
+        expect(cron.get('year')).to.equal('*');
+    });
+
+    it('validates an invalid measure of time when removing a value', function () {
+        cron = new cb();
+        expect(function () { cron.removeValue('ear') }).to.throw(Error);
+    });
 });
 
 //var cb = require('./cron-builder.js'),
