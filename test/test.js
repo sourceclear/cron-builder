@@ -129,6 +129,28 @@ describe('cron-builder', function () {
         getAllResponse.hour = ['28'];
         expect(function () { cron.setAll(getAllResponse) }).to.throw(Error);
     });
+
+    it('adds a value to a measureOfTime that is set to "*"', function () {
+        cron = new cb();
+        cron.addValue('5', 'minute');
+        expect(cron.get('minute')).to.equal('5');
+        expect(cron.build()).to.equal('5 * * * * *');
+    });
+
+    it('adds a value to a measure of time that has been set to a number', function () {
+        cron = new cb();
+        cron.addValue('5', 'hour');
+        cron.addValue('10', 'hour');
+        expect(cron.get('hour')).to.equal('5,10');
+    });
+
+    it('validates duplicate values', function () {
+        cron = new cb();
+        cron.addValue('5', 'dayOfTheMonth');
+        cron.addValue('15', 'dayOfTheMonth');
+        cron.addValue('5', 'dayOfTheMonth');
+        expect(cron.get('dayOfTheMonth')).to.equal('5,15');
+    });
 });
 
 //var cb = require('./cron-builder.js'),
