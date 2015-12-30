@@ -93,6 +93,18 @@ describe('cron-builder', function () {
         cron = new cb();
         expect(function () { cron.get('hours'); }).to.throw(Error);
     });
+
+    it('returns the entire expression object when getAll is called', function () {
+        cron = new cb();
+        var getAllResponse = cron.getAll();
+        expect(getAllResponse).to.be.an('object');
+        expect(getAllResponse).to.have.property('minute').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
+        expect(getAllResponse).to.have.property('hour').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
+        expect(getAllResponse).to.have.property('dayOfTheMonth').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
+        expect(getAllResponse).to.have.property('monthOfTheYear').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
+        expect(getAllResponse).to.have.property('dayOfTheWeek').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
+        expect(getAllResponse).to.have.property('year').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
+    });
 });
 
 //var cb = require('./cron-builder.js'),
