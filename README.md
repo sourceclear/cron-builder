@@ -2,11 +2,14 @@
 A simple JavaScript module for building cron expressions.
 
 ### API
-To initialize the cron builder (default expression is set to `* * * * * *`)
+To instantiate the cron builder:
 
 ```JavaScript
-var cb = require('/path/to/cron-builder.js'),
-    cronExp = new cb();
+var cb = require('/path/to/cron-builder.js');
+var cronExp = new cb();
+// (default expression is set to "* * * * * *")
+// optionally, pass in a cron expression to override the default:
+var myCronExp = new cb('5 12 * * 1-5 *')
 ```
 
 To return the cron expression at any given time:
