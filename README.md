@@ -1,13 +1,30 @@
 # cron-builder
 A simple JavaScript module for building cron expressions.
 
+### Install
+cron-builder is available on npm and bower:
+```
+npm install cron-builder --save
+```
+or
+```
+bower install cron-builder --save
+```
+
+After installing, just require the package as you normally would:
+```
+var cb = require('/path/to/cron-builder.js');
+```
+
+
+
 ### API
 To instantiate the cron builder:
 
 ```JavaScript
-var cb = require('/path/to/cron-builder.js');
-var cronExp = new cb();
 // (default expression is set to "* * * * * *")
+var cronExp = new cb();
+
 // optionally, pass in a cron expression to override the default:
 var myCronExp = new cb('5 12 * * 1-5 *')
 ```
