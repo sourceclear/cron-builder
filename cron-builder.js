@@ -1,30 +1,17 @@
 expressionObjectValidator = function (expression) {
-    var validateResponse = {valid: true},
-        valueCheck;
-
     if (Object.keys(expression).length > 6) {
-        validateResponse.valid = false;
-        validateResponse.message = 'Invalid cron expression; limited to 6 values.';
-        return validateResponse;
+        throw new Error('Invalid cron expression; limited to 6 values.');
     }
 
     for (var measureOfTime in expression) {
         if (expression.hasOwnProperty(measureOfTime)) {
-            valueCheck = valueValidator(expression[measureOfTime], measureOfTime);
-            if (!valueCheck.valid) {
-                validateResponse = valueCheck;
-                break;
-            }
+            valueValidator(expression[measureOfTime], measureOfTime);
         }
     }
-
-    return validateResponse;
 };
 
 expressionStringValidator = function (expression) {
-    var validateResponse = {valid: true},
-        valueCheck,
-        measureOfTimeMap = {
+    var measureOfTimeMap = {
             0: 'minute',
             1: 'hour',
             2: 'dayOfTheMonth',
@@ -34,25 +21,16 @@ expressionStringValidator = function (expression) {
         };
 
     if (expression.length > 6) {
-        validateResponse.valid = false;
-        validateResponse.message = 'Invalid cron expression; limited to 6 values.';
-        return validateResponse;
+        throw new Error('Invalid cron expression; limited to 6 values.');
     }
 
     for (var i = 0; i < expression.length; i++) {
-        valueCheck = valueValidator(expression[i], measureOfTimeMap[i]);
-        if (!valueCheck.valid) {
-            validateResponse = valueCheck;
-            break;
-        }
+        valueValidator(expression[i], measureOfTimeMap[i]);
     }
-
-    return validateResponse;
 };
 
 valueValidator = function (value, measureOfTime) {
-    var validateResponse = {valid: true},
-        validatorObj = {
+    var validatorObj = {
             minute: {min: 0, max: 59},
             hour: {min: 0, max: 23},
             dayOfTheMonth: {min: 1, max: 31},
@@ -93,22 +71,16 @@ valueValidator = function (value, measureOfTime) {
             }
         }
     }
-
-    return validateResponse;
 };
 
 function CronBuilder (initialExpression) {
-    var initialArray,
-        expressionCheck;
+    var initialArray;
 
     if (initialExpression) {
         initialArray = initialExpression.split(' ');
 
         // check to see if initial expression is valid
-        expressionCheck = expressionStringValidator(initialArray);
-        if (!expressionCheck.valid) {
-            throw expressionCheck.message;
-        }
+        expressionStringValidator(initialArray);
 
         this.expression = {};
         this.expression.minute = initialArray[0] ? [initialArray[0]] : ['*'];
@@ -143,11 +115,7 @@ CronBuilder.prototype.build = function () {
 };
 
 CronBuilder.prototype.addValue = function (value, measureOfTime) {
-    var valueCheck = valueValidator(value, measureOfTime);
-
-    if (!valueCheck.valid) {
-        return valueCheck;
-    }
+    valueValidator(value, measureOfTime);
 
     if (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*') {
         this.expression[measureOfTime] = [value];
@@ -160,11 +128,11 @@ CronBuilder.prototype.addValue = function (value, measureOfTime) {
 
 CronBuilder.prototype.removeValue = function (value, measureOfTime) {
     if (!this.expression[measureOfTime]) {
-        return 'Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".';
+        throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".');
     }
 
     if (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*') {
-        return 'The value for "' + measureOfTime + '" is already at the default "*"';
+        return 'The value for "' + measureOfTime + '" is already at the default value of "*" - this is a no-op.';
     }
 
     this.expression[measureOfTime] = this.expression[measureOfTime].filter(function (timeValue) {
@@ -178,24 +146,19 @@ CronBuilder.prototype.removeValue = function (value, measureOfTime) {
 
 CronBuilder.prototype.get = function (measureOfTime) {
     if (!this.expression[measureOfTime]) {
-        return 'Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".';
+        throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".');
     }
 
     return this.expression[measureOfTime].join(',');
 };
 
 CronBuilder.prototype.set = function (value, measureOfTime) {
-    var valueCheck;
-
     if (!Array.isArray(value)) {
         throw new Error('Invalid value; Value must be in the form of an Array.');
     }
 
     for(var i = 0; i < value.length; i++) {
-        valueCheck = valueValidator(value[i], measureOfTime);
-
-    if (!valueCheck.valid) {
-        return valueCheck;
+        valueValidator(value[i], measureOfTime);
     }
 
     this.expression[measureOfTime] = value;
@@ -208,11 +171,7 @@ CronBuilder.prototype.getAll = function () {
 };
 
 CronBuilder.prototype.setAll = function (expToSet) {
-    var expressionCheck = expressionObjectValidator(expToSet);
-
-    if (!expressionCheck.valid) {
-        return expressionCheck;
-    }
+    expressionObjectValidator(expToSet);
 
     this.expression = expToSet;
 };
