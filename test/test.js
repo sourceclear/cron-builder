@@ -88,6 +88,11 @@ describe('cron-builder', function () {
         cron.set(['30'], 'minute');
         expect(cron.get('minute')).to.equal('30');
     });
+
+    it('validates against getting with an invalid measureOfTime', function () {
+        cron = new cb();
+        expect(function () { cron.get('hours'); }).to.throw(Error);
+    });
 });
 
 //var cb = require('./cron-builder.js'),
