@@ -175,6 +175,19 @@ describe('cron-builder', function () {
         cron = new cb();
         expect(function () { cron.removeValue('ear') }).to.throw(Error);
     });
+
+    it('accepts a cron expression when instantiating', function () {
+        cron = new cb('30 0-6 * * 1-5 *');
+        expect(cron.build()).to.equal('30 0-6 * * 1-5 *');
+    });
+
+    it('validates bad values when instantiating with an explicit expression', function () {
+        expect(function () { cron = new cb('30 0-6 * * 1-10 *') }).to.throw(Error);
+    });
+
+    it('validates an expression that is too long when instantiating with an explicit expression', function () {
+        expect(function () { cron = new cb('30 0-6 * * 1-5 * * *') }).to.throw(Error);
+    });
 });
 
 //var cb = require('./cron-builder.js'),
