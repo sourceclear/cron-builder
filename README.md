@@ -1,5 +1,5 @@
 # cron-builder
-A simple JavaScript module for building cron expressions.
+cron-builder will manage the state of a cron expression allowing a user to manipulate it through a simple API. It is decoupled from the DOM and doesn't have an opinion about where it's being called from.
 
 ### Install
 cron-builder is available on npm and bower:
@@ -81,6 +81,10 @@ npm install
 npm test
 ```
 Pull requests and issues appreciated!
+
+### TODO
+- more validation for things like adding values that are already included in a range, better range validations...
+- sorting of values for a given measure of time
 
 ### License
 
