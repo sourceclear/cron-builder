@@ -64,15 +64,11 @@ valueValidator = function (value, measureOfTime) {
         validChars = /^[0-9*-]/;
 
     if (!validatorObj[measureOfTime]) {
-        validateResponse.valid = false;
-        validateResponse.message = 'Invalid measureOfTime; Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".'
-        return validateResponse;
+        throw new Error('Invalid measureOfTime; Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".');
     }
 
     if (!validChars.test(value)) {
-        validateResponse.valid = false;
-        validateResponse.message = 'Invalid value; Only numbers 0-9, "-", and "*" chars are allowed.';
-        return validateResponse;
+        throw new Error('Invalid value; Only numbers 0-9, "-", and "*" chars are allowed');
     }
 
     if (value !== '*') {
@@ -80,25 +76,20 @@ valueValidator = function (value, measureOfTime) {
         if (value.indexOf('-') >= 0) {
             // value is a range and must be split into high and low
             range = value.split('-');
-
             if (!range[0] || range[0] < validatorObj[measureOfTime].min) {
-                validateResponse.valid = false;
-                validateResponse.message = 'Invalid value; bottom of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].min + '.';
+                throw new Error('Invalid value; bottom of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].min + '.');
             }
 
             if (!range[1] || range[1] > validatorObj[measureOfTime].max) {
-                validateResponse.valid = false;
-                validateResponse.message = 'Invalid value; top of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].max + '.';
+                throw new Error('Invalid value; top of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].max + '.');
             }
         } else {
 
             if (parseInt(value) < validatorObj[measureOfTime].min) {
-                validateResponse.valid = false;
-                validateResponse.message = 'Invalid value; given value is not valid for "' + measureOfTime + '". Minimum value is "' + validatorObj[measureOfTime].min + '".';
+                throw new Error('Invalid value; given value is not valid for "' + measureOfTime + '". Minimum value is "' + validatorObj[measureOfTime].min + '".');
             }
             if (parseInt(value) > validatorObj[measureOfTime].max) {
-                validateResponse.valid = false;
-                validateResponse.message = 'Invalid value; given value is not valid for "' + measureOfTime + '". Maximum value is "' + validatorObj[measureOfTime].max + '".';
+                throw new Error('Invalid value; given value is not valid for "' + measureOfTime + '". Maximum value is "' + validatorObj[measureOfTime].max + '".');
             }
         }
     }
@@ -197,10 +188,11 @@ CronBuilder.prototype.set = function (value, measureOfTime) {
     var valueCheck;
 
     if (!Array.isArray(value)) {
-        return 'Invalid value; Value must be in the form of an Array.';
+        throw new Error('Invalid value; Value must be in the form of an Array.');
     }
 
-    valueCheck = valueValidator(value, measureOfTime);
+    for(var i = 0; i < value.length; i++) {
+        valueCheck = valueValidator(value[i], measureOfTime);
 
     if (!valueCheck.valid) {
         return valueCheck;

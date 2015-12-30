@@ -47,6 +47,42 @@ describe('cron-builder', function () {
         expect(cron.build()).to.equal('10,30,50 6,18 1,15 * 1-5 2015-2025');
     });
 
+    it('validates against setting an incorrect measureOfTime', function () {
+        cron = new cb();
+        expect(function () { cron.set(['5'], 'minutes') }).to.throw(Error);
+    });
+
+    it('validates against setting a value that is not an Array', function () {
+        cron = new cb();
+        expect(function () { cron.set('10', 'hour') }).to.throw(Error);
+    });
+
+    it('validates against setting a value that is not a number or range of numbers', function () {
+        cron = new cb();
+        expect(function () { cron.set(['!'], 'year') }).to.throw(Error);
+    });
+
+    describe('validates against setting values outside the valid range', function () {
+        it('validates against values too low', function () {
+            cron = new cb();
+            expect(function () { cron.set(['0'], 'dayOfTheWeek') }).to.throw(Error);
+        });
+
+        it('validates against values too high', function () {
+            cron = new cb();
+            expect(function () { cron.set(['100'], 'hour') }).to.throw(Error);
+        });
+
+        it('validates against setting a range that is out of bounds', function () {
+            cron = new cb();
+            expect(function () { cron.set(['1834-2015'], 'year') }).to.throw(Error);
+
+            expect(function () { cron.set(['20-60'], 'minute') }).to.throw(Error);
+
+            expect(function () { cron.set(['12', '22-26', '15'], 'hour') }).to.throw(Error);
+        });
+    });
+
     it('gets a single value', function () {
         cron = new cb();
         cron.set(['30'], 'minute');
