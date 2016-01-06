@@ -87,8 +87,9 @@ var CronValidator = (function() {
 }());
 
 var CronBuilder = function(initialExpression) {
+    var initialArray;
     if (initialExpression) {
-        var initialArray = initialExpression.split(' ');
+        initialArray = initialExpression.split(' ');
 
         // check to see if initial expression is valid
         CronValidator.validateString(initialArray);
