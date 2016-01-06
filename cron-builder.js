@@ -95,13 +95,14 @@ var CronBuilder = function(initialExpression) {
         // check to see if initial expression is valid
         CronValidator.validateString(initialArray);
 
-        this.expression = {};
-        this.expression.minute = initialArray[0] ? [initialArray[0]] : DEFAULT_INTERVAL;
-        this.expression.hour = initialArray[1] ? [initialArray[1]] : DEFAULT_INTERVAL;
-        this.expression.dayOfTheMonth = initialArray[2] ? [initialArray[2]] : DEFAULT_INTERVAL;
-        this.expression.monthOfTheYear = initialArray[3] ? [initialArray[3]] : DEFAULT_INTERVAL;
-        this.expression.dayOfTheWeek = initialArray[4] ? [initialArray[4]] : DEFAULT_INTERVAL;
-        this.expression.year = initialArray[5] ? [initialArray[5]] : DEFAULT_INTERVAL;
+        this.expression = {
+            minute: initialArray[0] ? [initialArray[0]] : DEFAULT_INTERVAL,
+            hour: initialArray[1] ? [initialArray[1]] : DEFAULT_INTERVAL,
+            dayOfTheMonth: initialArray[2] ? [initialArray[2]] : DEFAULT_INTERVAL,
+            monthOfTheYear: initialArray[3] ? [initialArray[3]] : DEFAULT_INTERVAL,
+            dayOfTheWeek: initialArray[4] ? [initialArray[4]] : DEFAULT_INTERVAL,
+            year: initialArray[5] ? [initialArray[5]] : DEFAULT_INTERVAL
+        };
     } else {
         this.expression = {
             minute: DEFAULT_INTERVAL,
