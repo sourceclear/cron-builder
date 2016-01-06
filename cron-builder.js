@@ -114,16 +114,14 @@ var CronBuilder = function(initialExpression) {
 }
 
 CronBuilder.prototype.build = function () {
-    var expressionArray = [];
-
-    expressionArray.push(this.expression.minute.join(','));
-    expressionArray.push(this.expression.hour.join(','));
-    expressionArray.push(this.expression.dayOfTheMonth.join(','));
-    expressionArray.push(this.expression.monthOfTheYear.join(','));
-    expressionArray.push(this.expression.dayOfTheWeek.join(','));
-    expressionArray.push(this.expression.year.join(','));
-
-    return expressionArray.join(' ');
+    return [
+        this.expression.minute.join(','),
+        this.expression.hour.join(','),
+        this.expression.dayOfTheMonth.join(','),
+        this.expression.monthOfTheYear.join(','),
+        this.expression.dayOfTheWeek.join(','),
+        this.expression.year.join(',')
+    ].join(' ');
 };
 
 CronBuilder.prototype.addValue = function (value, measureOfTime) {
