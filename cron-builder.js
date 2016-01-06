@@ -1,3 +1,4 @@
+var DEFAULT_INTERVAL = ['*'];
 expressionObjectValidator = function (expression) {
     // don't care if it's less than 6, we'll just set those to the default '*'
     if (Object.keys(expression).length > 6) {
@@ -84,20 +85,20 @@ function CronBuilder (initialExpression) {
         expressionStringValidator(initialArray);
 
         this.expression = {};
-        this.expression.minute = initialArray[0] ? [initialArray[0]] : ['*'];
-        this.expression.hour = initialArray[1] ? [initialArray[1]] : ['*'];
-        this.expression.dayOfTheMonth = initialArray[2] ? [initialArray[2]] : ['*'];
-        this.expression.monthOfTheYear = initialArray[3] ? [initialArray[3]] : ['*'];
-        this.expression.dayOfTheWeek = initialArray[4] ? [initialArray[4]] : ['*'];
-        this.expression.year = initialArray[5] ? [initialArray[5]] : ['*'];
+        this.expression.minute = initialArray[0] ? [initialArray[0]] : DEFAULT_INTERVAL;
+        this.expression.hour = initialArray[1] ? [initialArray[1]] : DEFAULT_INTERVAL;
+        this.expression.dayOfTheMonth = initialArray[2] ? [initialArray[2]] : DEFAULT_INTERVAL;
+        this.expression.monthOfTheYear = initialArray[3] ? [initialArray[3]] : DEFAULT_INTERVAL;
+        this.expression.dayOfTheWeek = initialArray[4] ? [initialArray[4]] : DEFAULT_INTERVAL;
+        this.expression.year = initialArray[5] ? [initialArray[5]] : DEFAULT_INTERVAL;
     } else {
         this.expression = {
-            minute: ['*'],
-            hour: ['*'],
-            dayOfTheMonth: ['*'],
-            monthOfTheYear: ['*'],
-            dayOfTheWeek: ['*'],
-            year: ['*']
+            minute: DEFAULT_INTERVAL,
+            hour: DEFAULT_INTERVAL,
+            dayOfTheMonth: DEFAULT_INTERVAL,
+            monthOfTheYear: DEFAULT_INTERVAL,
+            dayOfTheWeek: DEFAULT_INTERVAL,
+            year: DEFAULT_INTERVAL
         };
     }
 }
@@ -141,7 +142,7 @@ CronBuilder.prototype.removeValue = function (value, measureOfTime) {
     });
 
     if (!this.expression[measureOfTime].length) {
-        this.expression[measureOfTime] = ['*'];
+        this.expression[measureOfTime] = DEFAULT_INTERVAL;
     }
 };
 
