@@ -86,7 +86,7 @@ var CronValidator = (function() {
     }
 }());
 
-function CronBuilder (initialExpression) {
+var CronBuilder = function(initialExpression) {
     var initialArray;
 
     if (initialExpression) {
