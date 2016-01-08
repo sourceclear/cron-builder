@@ -1,122 +1,133 @@
-expressionObjectValidator = function (expression) {
-    // don't care if it's less than 6, we'll just set those to the default '*'
-    if (Object.keys(expression).length > 6) {
-        throw new Error('Invalid cron expression; limited to 6 values.');
-    }
+var DEFAULT_INTERVAL = ['*'];
 
-    for (var measureOfTime in expression) {
-        if (expression.hasOwnProperty(measureOfTime)) {
-            valueValidator(expression[measureOfTime], measureOfTime);
+var CronValidator = (function() {
+
+    var validateExpression = function(expression) {
+        // don't care if it's less than 6, we'll just set those to the default '*'
+        if (Object.keys(expression).length > 6) {
+            throw new Error('Invalid cron expression; limited to 6 values.');
         }
-    }
-};
 
-expressionStringValidator = function (expression) {
-    var measureOfTimeMap = {
-            0: 'minute',
-            1: 'hour',
-            2: 'dayOfTheMonth',
-            3: 'monthOfTheYear',
-            4: 'dayOfTheWeek',
-            5: 'year'
-        };
-
-    if (expression.length > 6) {
-        throw new Error('Invalid cron expression; limited to 6 values.');
-    }
-
-    for (var i = 0; i < expression.length; i++) {
-        valueValidator(expression[i], measureOfTimeMap[i]);
-    }
-};
-
-valueValidator = function (value, measureOfTime) {
-    var validatorObj = {
-            minute: {min: 0, max: 59},
-            hour: {min: 0, max: 23},
-            dayOfTheMonth: {min: 1, max: 31},
-            monthOfTheYear: {min: 1, max: 12},
-            dayOfTheWeek: {min: 1, max: 7},
-            year: {min: 1900, max: 3000}
-        },
-        range,
-        validChars = /^[0-9*-]/;
-
-    if (!validatorObj[measureOfTime]) {
-        throw new Error('Invalid measureOfTime; Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".');
-    }
-
-    if (!validChars.test(value)) {
-        throw new Error('Invalid value; Only numbers 0-9, "-", and "*" chars are allowed');
-    }
-
-    if (value !== '*') {
-        // check to see if value is within range if value is not '*'
-        if (value.indexOf('-') >= 0) {
-            // value is a range and must be split into high and low
-            range = value.split('-');
-            if (!range[0] || range[0] < validatorObj[measureOfTime].min) {
-                throw new Error('Invalid value; bottom of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].min + '.');
-            }
-
-            if (!range[1] || range[1] > validatorObj[measureOfTime].max) {
-                throw new Error('Invalid value; top of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].max + '.');
-            }
-        } else {
-
-            if (parseInt(value) < validatorObj[measureOfTime].min) {
-                throw new Error('Invalid value; given value is not valid for "' + measureOfTime + '". Minimum value is "' + validatorObj[measureOfTime].min + '".');
-            }
-            if (parseInt(value) > validatorObj[measureOfTime].max) {
-                throw new Error('Invalid value; given value is not valid for "' + measureOfTime + '". Maximum value is "' + validatorObj[measureOfTime].max + '".');
+        for (var measureOfTime in expression) {
+            if (expression.hasOwnProperty(measureOfTime)) {
+                this.validateValue(expression[measureOfTime], measureOfTime);
             }
         }
+    },
+
+    validateString = function(expression) {
+        var measureOfTimeMap = {
+                0: 'minute',
+                1: 'hour',
+                2: 'dayOfTheMonth',
+                3: 'monthOfTheYear',
+                4: 'dayOfTheWeek',
+                5: 'year'
+            },
+            splitExpression = expression.split(' ');
+
+        if (splitExpression.length > 6) {
+            throw new Error('Invalid cron expression; limited to 6 values.');
+        }
+
+        for (var i = 0; i < splitExpression.length; i++) {
+            this.validateValue(splitExpression[i], measureOfTimeMap[i]);
+        }
+    },
+
+    validateValue = function(value, measureOfTime) {
+        var validatorObj = {
+                minute: {min: 0, max: 59},
+                hour: {min: 0, max: 23},
+                dayOfTheMonth: {min: 1, max: 31},
+                monthOfTheYear: {min: 1, max: 12},
+                dayOfTheWeek: {min: 1, max: 7},
+                year: {min: 1900, max: 3000}
+            },
+            range,
+            validChars = /^[0-9*-]/;
+
+        if (!validatorObj[measureOfTime]) {
+            throw new Error('Invalid measureOfTime; Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", "dayOfTheWeek", & "year".');
+        }
+
+        if (!validChars.test(value)) {
+            throw new Error('Invalid value; Only numbers 0-9, "-", and "*" chars are allowed');
+        }
+
+        if (value !== '*') {
+            // check to see if value is within range if value is not '*'
+            if (value.indexOf('-') >= 0) {
+                // value is a range and must be split into high and low
+                range = value.split('-');
+                if (!range[0] || range[0] < validatorObj[measureOfTime].min) {
+                    throw new Error('Invalid value; bottom of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].min + '.');
+                }
+
+                if (!range[1] || range[1] > validatorObj[measureOfTime].max) {
+                    throw new Error('Invalid value; top of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].max + '.');
+                }
+            } else {
+
+                if (parseInt(value) < validatorObj[measureOfTime].min) {
+                    throw new Error('Invalid value; given value is not valid for "' + measureOfTime + '". Minimum value is "' + validatorObj[measureOfTime].min + '".');
+                }
+                if (parseInt(value) > validatorObj[measureOfTime].max) {
+                    throw new Error('Invalid value; given value is not valid for "' + measureOfTime + '". Maximum value is "' + validatorObj[measureOfTime].max + '".');
+                }
+            }
+        }
     }
-};
 
-function CronBuilder (initialExpression) {
-    var initialArray;
 
+    return {
+        validateExpression: validateExpression,
+        validateString: validateString,
+        validateValue: validateValue
+    }
+}());
+
+var CronBuilder = function(initialExpression) {
+    var splitExpression;
     if (initialExpression) {
-        initialArray = initialExpression.split(' ');
+        CronValidator.validateString(initialExpression);
 
+        splitExpression = initialExpression.split(' ');
         // check to see if initial expression is valid
-        expressionStringValidator(initialArray);
 
-        this.expression = {};
-        this.expression.minute = initialArray[0] ? [initialArray[0]] : ['*'];
-        this.expression.hour = initialArray[1] ? [initialArray[1]] : ['*'];
-        this.expression.dayOfTheMonth = initialArray[2] ? [initialArray[2]] : ['*'];
-        this.expression.monthOfTheYear = initialArray[3] ? [initialArray[3]] : ['*'];
-        this.expression.dayOfTheWeek = initialArray[4] ? [initialArray[4]] : ['*'];
-        this.expression.year = initialArray[5] ? [initialArray[5]] : ['*'];
+        this.expression = {
+            minute: splitExpression[0] ? [splitExpression[0]] : DEFAULT_INTERVAL,
+            hour: splitExpression[1] ? [splitExpression[1]] : DEFAULT_INTERVAL,
+            dayOfTheMonth: splitExpression[2] ? [splitExpression[2]] : DEFAULT_INTERVAL,
+            monthOfTheYear: splitExpression[3] ? [splitExpression[3]] : DEFAULT_INTERVAL,
+            dayOfTheWeek: splitExpression[4] ? [splitExpression[4]] : DEFAULT_INTERVAL,
+            year: splitExpression[5] ? [splitExpression[5]] : DEFAULT_INTERVAL
+        };
     } else {
         this.expression = {
-            minute: ['*'],
-            hour: ['*'],
-            dayOfTheMonth: ['*'],
-            monthOfTheYear: ['*'],
-            dayOfTheWeek: ['*'],
-            year: ['*']
+            minute: DEFAULT_INTERVAL,
+            hour: DEFAULT_INTERVAL,
+            dayOfTheMonth: DEFAULT_INTERVAL,
+            monthOfTheYear: DEFAULT_INTERVAL,
+            dayOfTheWeek: DEFAULT_INTERVAL,
+            year: DEFAULT_INTERVAL
         };
     }
 }
 
 CronBuilder.prototype.build = function () {
-    var expressionArray = [];
-
-    expressionArray.push(this.expression.minute.join(','));
-    expressionArray.push(this.expression.hour.join(','));
-    expressionArray.push(this.expression.dayOfTheMonth.join(','));
-    expressionArray.push(this.expression.monthOfTheYear.join(','));
-    expressionArray.push(this.expression.dayOfTheWeek.join(','));
-    expressionArray.push(this.expression.year.join(','));
-
-    return expressionArray.join(' ');
+    return [
+        this.expression.minute.join(','),
+        this.expression.hour.join(','),
+        this.expression.dayOfTheMonth.join(','),
+        this.expression.monthOfTheYear.join(','),
+        this.expression.dayOfTheWeek.join(','),
+        this.expression.year.join(',')
+    ].join(' ');
 };
 
 CronBuilder.prototype.addValue = function (value, measureOfTime) {
-    valueValidator(value, measureOfTime);
+    CronValidator.validateValue(value, measureOfTime);
 
     if (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*') {
         this.expression[measureOfTime] = [value];
@@ -141,7 +152,7 @@ CronBuilder.prototype.removeValue = function (value, measureOfTime) {
     });
 
     if (!this.expression[measureOfTime].length) {
-        this.expression[measureOfTime] = ['*'];
+        this.expression[measureOfTime] = DEFAULT_INTERVAL;
     }
 };
 
@@ -159,7 +170,7 @@ CronBuilder.prototype.set = function (value, measureOfTime) {
     }
 
     for(var i = 0; i < value.length; i++) {
-        valueValidator(value[i], measureOfTime);
+        CronValidator.validateValue(value[i], measureOfTime);
     }
 
     this.expression[measureOfTime] = value;
@@ -172,7 +183,7 @@ CronBuilder.prototype.getAll = function () {
 };
 
 CronBuilder.prototype.setAll = function (expToSet) {
-    expressionObjectValidator(expToSet);
+    CronValidator.validateExpression(expToSet);
 
     this.expression = expToSet;
 };
