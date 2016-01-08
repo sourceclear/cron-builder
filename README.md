@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/waneka/cron-builder.svg)](https://travis-ci.org/waneka/cron-builder)
 # cron-builder
 cron-builder will manage the state of a cron expression allowing a user to manipulate it through a simple API. It is decoupled from the DOM and doesn't have an opinion about where it's being called from.
 
