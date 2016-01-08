@@ -23,14 +23,15 @@ var CronValidator = (function() {
                 3: 'monthOfTheYear',
                 4: 'dayOfTheWeek',
                 5: 'year'
-            };
+            },
+            splitExpression = expression.split(' ');
 
-        if (expression.length > 6) {
+        if (splitExpression.length > 6) {
             throw new Error('Invalid cron expression; limited to 6 values.');
         }
 
-        for (var i = 0; i < expression.length; i++) {
-            this.validateValue(expression[i], measureOfTimeMap[i]);
+        for (var i = 0; i < splitExpression.length; i++) {
+            this.validateValue(splitExpression[i], measureOfTimeMap[i]);
         }
     },
 
@@ -87,20 +88,20 @@ var CronValidator = (function() {
 }());
 
 var CronBuilder = function(initialExpression) {
-    var initialArray;
+    var splitExpression;
     if (initialExpression) {
-        initialArray = initialExpression.split(' ');
+        CronValidator.validateString(initialExpression);
 
+        splitExpression = initialExpression.split(' ');
         // check to see if initial expression is valid
-        CronValidator.validateString(initialArray);
 
         this.expression = {
-            minute: initialArray[0] ? [initialArray[0]] : DEFAULT_INTERVAL,
-            hour: initialArray[1] ? [initialArray[1]] : DEFAULT_INTERVAL,
-            dayOfTheMonth: initialArray[2] ? [initialArray[2]] : DEFAULT_INTERVAL,
-            monthOfTheYear: initialArray[3] ? [initialArray[3]] : DEFAULT_INTERVAL,
-            dayOfTheWeek: initialArray[4] ? [initialArray[4]] : DEFAULT_INTERVAL,
-            year: initialArray[5] ? [initialArray[5]] : DEFAULT_INTERVAL
+            minute: splitExpression[0] ? [splitExpression[0]] : DEFAULT_INTERVAL,
+            hour: splitExpression[1] ? [splitExpression[1]] : DEFAULT_INTERVAL,
+            dayOfTheMonth: splitExpression[2] ? [splitExpression[2]] : DEFAULT_INTERVAL,
+            monthOfTheYear: splitExpression[3] ? [splitExpression[3]] : DEFAULT_INTERVAL,
+            dayOfTheWeek: splitExpression[4] ? [splitExpression[4]] : DEFAULT_INTERVAL,
+            year: splitExpression[5] ? [splitExpression[5]] : DEFAULT_INTERVAL
         };
     } else {
         this.expression = {
