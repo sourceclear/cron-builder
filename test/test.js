@@ -162,6 +162,7 @@ describe('cron-builder', function () {
     it('resets the value to the default "*" when removing the only value', function () {
         cron = new cb();
         cron.set(['7'], 'minute');
+        expect(cron.get('minute')).to.equal('7');
         cron.removeValue('7', 'minute');
         expect(cron.get('minute')).to.equal('*');
     });
