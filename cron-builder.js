@@ -1,6 +1,26 @@
 var DEFAULT_INTERVAL = ['*'];
 
 var CronValidator = (function() {
+    /**
+     * Contains the position-to-name mapping of the cron expression
+     * @type {Object}
+     * @const
+     */
+    var MeasureOfTimeMap = {
+            0: 'minute',
+            1: 'hour',
+            2: 'dayOfTheMonth',
+            3: 'month',
+            4: 'dayOfTheWeek'
+        },
+        /**
+         * contains every permissible 'measureOfTime' string constant
+         * @const
+         * @type {Array}
+         */
+        MeasureOfTimeValues = Object.keys(MeasureOfTimeMap).map(function (key) {
+            return MeasureOfTimeMap[key];
+        });
 
     /**
      * validates a given cron expression (object) for length, then calls validateValue on each value
@@ -32,21 +52,14 @@ var CronValidator = (function() {
      * @throws {Error} if the string contains more than 5 space delimited parts.
      */
     validateString = function(expression) {
-        var measureOfTimeMap = {
-                0: 'minute',
-                1: 'hour',
-                2: 'dayOfTheMonth',
-                3: 'month',
-                4: 'dayOfTheWeek'
-            },
-            splitExpression = expression.split(' ');
+        var splitExpression = expression.split(' ');
 
         if (splitExpression.length > 6) {
             throw new Error('Invalid cron expression; limited to 5 values.');
         }
 
         for (var i = 0; i < splitExpression.length; i++) {
-            this.validateValue(measureOfTimeMap[i], splitExpression[i]);
+            this.validateValue(MeasureOfTimeMap[i], splitExpression[i]);
         }
     },
 
@@ -59,17 +72,17 @@ var CronValidator = (function() {
      */
     validateValue = function(measureOfTime, value) {
         var validatorObj = {
-                minute: {min: 0, max: 59},
-                hour: {min: 0, max: 23},
+                minute:        {min: 0, max: 59},
+                hour:          {min: 0, max: 23},
                 dayOfTheMonth: {min: 1, max: 31},
-                month: {min: 1, max: 12},
-                dayOfTheWeek: {min: 1, max: 7}
+                month:         {min: 1, max: 12},
+                dayOfTheWeek:  {min: 1, max: 7}
             },
             range,
             validChars = /^[0-9*-]/;
 
         if (!validatorObj[measureOfTime]) {
-            throw new Error('Invalid measureOfTime; Valid options are: "minute", "hour", "dayOfTheMonth", "month", & "dayOfTheWeek".');
+            throw new Error('Invalid measureOfTime; Valid options are: ' + MeasureOfTimeValues.join(', '));
         }
 
         if (!validChars.test(value)) {
@@ -98,10 +111,11 @@ var CronValidator = (function() {
                 }
             }
         }
-    }
+    };
 
 
     return {
+        measureOfTimeValues: MeasureOfTimeValues,
         validateExpression: validateExpression,
         validateString: validateString,
         validateValue: validateValue
@@ -124,11 +138,11 @@ var CronBuilder = function(initialExpression) {
         // check to see if initial expression is valid
 
         this.expression = {
-            minute: splitExpression[0] ? [splitExpression[0]] : DEFAULT_INTERVAL,
-            hour: splitExpression[1] ? [splitExpression[1]] : DEFAULT_INTERVAL,
+            minute:        splitExpression[0] ? [splitExpression[0]] : DEFAULT_INTERVAL,
+            hour:          splitExpression[1] ? [splitExpression[1]] : DEFAULT_INTERVAL,
             dayOfTheMonth: splitExpression[2] ? [splitExpression[2]] : DEFAULT_INTERVAL,
-            month: splitExpression[3] ? [splitExpression[3]] : DEFAULT_INTERVAL,
-            dayOfTheWeek: splitExpression[4] ? [splitExpression[4]] : DEFAULT_INTERVAL,
+            month:         splitExpression[3] ? [splitExpression[3]] : DEFAULT_INTERVAL,
+            dayOfTheWeek:  splitExpression[4] ? [splitExpression[4]] : DEFAULT_INTERVAL,
         };
     } else {
         this.expression = {
@@ -139,7 +153,7 @@ var CronBuilder = function(initialExpression) {
             dayOfTheWeek: DEFAULT_INTERVAL,
         };
     }
-}
+};
 
 /**
  * builds a working cron expression based on the state of the cron object
@@ -181,7 +195,7 @@ CronBuilder.prototype.addValue = function (measureOfTime, value) {
  */
 CronBuilder.prototype.removeValue = function (measureOfTime, value) {
     if (!this.expression[measureOfTime]) {
-        throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "month", & "dayOfTheWeek".');
+        throw new Error('Invalid measureOfTime: Valid options are: ' + CronValidator.measureOfTimeValues.join(', '));
     }
 
     if (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*') {
@@ -205,7 +219,7 @@ CronBuilder.prototype.removeValue = function (measureOfTime, value) {
  */
 CronBuilder.prototype.get = function (measureOfTime) {
     if (!this.expression[measureOfTime]) {
-        throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "month", & "dayOfTheWeek".');
+        throw new Error('Invalid measureOfTime: Valid options are: ' + CronValidator.measureOfTimeValues.join(', '));
     }
 
     return this.expression[measureOfTime].join(',');
