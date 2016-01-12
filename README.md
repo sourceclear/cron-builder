@@ -42,7 +42,7 @@ API includes basic getters and setters:
 ```JavaScript
 cronExp.get('minute');
 // '*'
-cronExp.set('5,35', 'minute');
+cronExp.set('minute', '5,35');
 // '5,35'
 cronExp.get('minute');
 // '5,35'
@@ -52,13 +52,13 @@ cronExp.build();
 
 Or if you'd prefer to dd or remove values one at a time, use `addValue` and `removeValue`. These methods build or take away from what is currently set:
 ```JavaScript
-cronExp.addValue('2', 'hour');
-cronExp.addValue('4', 'monthOfTheYear');
-cronExp.addValue('10', 'monthOfTheYear');
+cronExp.addValue('hour', '2');
+cronExp.addValue('monthOfTheYear', '4');
+cronExp.addValue('monthOfTheYear', '10');
 cronExp.build();
 // '5,35 2 * 4,10 *'
 
-cronExp.removeValue('5', 'minute');
+cronExp.removeValue('minute', '5');
 cronExp.build();
 // '35 2 * 4,10 *'
 ```
