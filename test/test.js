@@ -10,7 +10,7 @@ describe('cron-builder', function () {
         expect(cron.expression.minute).to.eql(['*']);
         expect(cron.expression.hour).to.eql(['*']);
         expect(cron.expression.dayOfTheMonth).to.eql(['*']);
-        expect(cron.expression.monthOfTheYear).to.eql(['*']);
+        expect(cron.expression.month).to.eql(['*']);
         expect(cron.expression.dayOfTheWeek).to.eql(['*']);
     });
 
@@ -97,7 +97,7 @@ describe('cron-builder', function () {
         expect(getAllResponse).to.have.property('minute').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
         expect(getAllResponse).to.have.property('hour').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
         expect(getAllResponse).to.have.property('dayOfTheMonth').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
-        expect(getAllResponse).to.have.property('monthOfTheYear').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
+        expect(getAllResponse).to.have.property('month').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
         expect(getAllResponse).to.have.property('dayOfTheWeek').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
     });
 
@@ -105,7 +105,7 @@ describe('cron-builder', function () {
         cron = new cb();
         var getAllResponse = cron.getAll();
         getAllResponse.hour = ['13'];
-        getAllResponse.monthOfTheYear = ['1-6'];
+        getAllResponse.month = ['1-6'];
         getAllResponse.dayOfTheWeek = ['1,3,5,7'];
         cron.setAll(getAllResponse);
         expect(cron.build()).to.equal('* 13 * 1-6 1,3,5,7');
