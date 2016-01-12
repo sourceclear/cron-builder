@@ -10,7 +10,7 @@ var CronValidator = (function() {
 
         for (var measureOfTime in expression) {
             if (expression.hasOwnProperty(measureOfTime)) {
-                this.validateValue(expression[measureOfTime], measureOfTime);
+                this.validateValue(measureOfTime, expression[measureOfTime]);
             }
         }
     },
@@ -20,7 +20,7 @@ var CronValidator = (function() {
                 0: 'minute',
                 1: 'hour',
                 2: 'dayOfTheMonth',
-                3: 'monthOfTheYear',
+                3: 'month',
                 4: 'dayOfTheWeek'
             },
             splitExpression = expression.split(' ');
@@ -30,23 +30,23 @@ var CronValidator = (function() {
         }
 
         for (var i = 0; i < splitExpression.length; i++) {
-            this.validateValue(splitExpression[i], measureOfTimeMap[i]);
+            this.validateValue(measureOfTimeMap[i], splitExpression[i]);
         }
     },
 
-    validateValue = function(value, measureOfTime) {
+    validateValue = function(measureOfTime, value) {
         var validatorObj = {
                 minute: {min: 0, max: 59},
                 hour: {min: 0, max: 23},
                 dayOfTheMonth: {min: 1, max: 31},
-                monthOfTheYear: {min: 1, max: 12},
+                month: {min: 1, max: 12},
                 dayOfTheWeek: {min: 1, max: 7}
             },
             range,
             validChars = /^[0-9*-]/;
 
         if (!validatorObj[measureOfTime]) {
-            throw new Error('Invalid measureOfTime; Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", & "dayOfTheWeek".');
+            throw new Error('Invalid measureOfTime; Valid options are: "minute", "hour", "dayOfTheMonth", "month", & "dayOfTheWeek".');
         }
 
         if (!validChars.test(value)) {
@@ -97,7 +97,7 @@ var CronBuilder = function(initialExpression) {
             minute: splitExpression[0] ? [splitExpression[0]] : DEFAULT_INTERVAL,
             hour: splitExpression[1] ? [splitExpression[1]] : DEFAULT_INTERVAL,
             dayOfTheMonth: splitExpression[2] ? [splitExpression[2]] : DEFAULT_INTERVAL,
-            monthOfTheYear: splitExpression[3] ? [splitExpression[3]] : DEFAULT_INTERVAL,
+            month: splitExpression[3] ? [splitExpression[3]] : DEFAULT_INTERVAL,
             dayOfTheWeek: splitExpression[4] ? [splitExpression[4]] : DEFAULT_INTERVAL,
         };
     } else {
@@ -105,7 +105,7 @@ var CronBuilder = function(initialExpression) {
             minute: DEFAULT_INTERVAL,
             hour: DEFAULT_INTERVAL,
             dayOfTheMonth: DEFAULT_INTERVAL,
-            monthOfTheYear: DEFAULT_INTERVAL,
+            month: DEFAULT_INTERVAL,
             dayOfTheWeek: DEFAULT_INTERVAL,
         };
     }
@@ -116,13 +116,13 @@ CronBuilder.prototype.build = function () {
         this.expression.minute.join(','),
         this.expression.hour.join(','),
         this.expression.dayOfTheMonth.join(','),
-        this.expression.monthOfTheYear.join(','),
+        this.expression.month.join(','),
         this.expression.dayOfTheWeek.join(','),
     ].join(' ');
 };
 
-CronBuilder.prototype.addValue = function (value, measureOfTime) {
-    CronValidator.validateValue(value, measureOfTime);
+CronBuilder.prototype.addValue = function (measureOfTime, value) {
+    CronValidator.validateValue(measureOfTime, value);
 
     if (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*') {
         this.expression[measureOfTime] = [value];
@@ -133,9 +133,9 @@ CronBuilder.prototype.addValue = function (value, measureOfTime) {
     }
 };
 
-CronBuilder.prototype.removeValue = function (value, measureOfTime) {
+CronBuilder.prototype.removeValue = function (measureOfTime, value) {
     if (!this.expression[measureOfTime]) {
-        throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", & "dayOfTheWeek".');
+        throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "month", & "dayOfTheWeek".');
     }
 
     if (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*') {
@@ -153,19 +153,19 @@ CronBuilder.prototype.removeValue = function (value, measureOfTime) {
 
 CronBuilder.prototype.get = function (measureOfTime) {
     if (!this.expression[measureOfTime]) {
-        throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "monthOfTheYear", & "dayOfTheWeek".');
+        throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "month", & "dayOfTheWeek".');
     }
 
     return this.expression[measureOfTime].join(',');
 };
 
-CronBuilder.prototype.set = function (value, measureOfTime) {
+CronBuilder.prototype.set = function (measureOfTime, value) {
     if (!Array.isArray(value)) {
         throw new Error('Invalid value; Value must be in the form of an Array.');
     }
 
     for(var i = 0; i < value.length; i++) {
-        CronValidator.validateValue(value[i], measureOfTime);
+        CronValidator.validateValue(measureOfTime, value[i]);
     }
 
     this.expression[measureOfTime] = value;

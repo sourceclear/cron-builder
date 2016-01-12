@@ -10,7 +10,7 @@ describe('cron-builder', function () {
         expect(cron.expression.minute).to.eql(['*']);
         expect(cron.expression.hour).to.eql(['*']);
         expect(cron.expression.dayOfTheMonth).to.eql(['*']);
-        expect(cron.expression.monthOfTheYear).to.eql(['*']);
+        expect(cron.expression.month).to.eql(['*']);
         expect(cron.expression.dayOfTheWeek).to.eql(['*']);
     });
 
@@ -20,28 +20,28 @@ describe('cron-builder', function () {
 
     it('sets a single value', function () {
         cron = new cb();
-        expect(cron.set(['5'], 'hour')).to.equal('5');
+        expect(cron.set('hour', ['5'])).to.equal('5');
         expect(cron.build()).to.equal('* 5 * * *');
     });
 
     it('sets multiple values at once', function () {
         cron = new cb();
-        expect(cron.set(['0', '10', '20', '30', '40', '50'], 'minute')).to.equal('0,10,20,30,40,50');
+        expect(cron.set('minute', ['0', '10', '20', '30', '40', '50'])).to.equal('0,10,20,30,40,50');
         expect(cron.build()).to.equal('0,10,20,30,40,50 * * * *');
     });
 
     it('sets a range', function () {
         cron = new cb();
-        expect(cron.set(['5-7'], 'dayOfTheWeek')).to.equal('5-7');
+        expect(cron.set('dayOfTheWeek', ['5-7'])).to.equal('5-7');
         expect(cron.build()).to.equal('* * * * 5-7');
     });
 
     it('multiple sets build the cron string accurately', function () {
         cron = new cb();
-        cron.set(['10', '30', '50'], 'minute');
-        cron.set(['6', '18'], 'hour');
-        cron.set(['1', '15'], 'dayOfTheMonth');
-        cron.set(['1-5'], 'dayOfTheWeek');
+        cron.set('minute', ['10', '30', '50']);
+        cron.set('hour', ['6', '18']);
+        cron.set('dayOfTheMonth', ['1', '15']);
+        cron.set('dayOfTheWeek', ['1-5']);
         expect(cron.build()).to.equal('10,30,50 6,18 1,15 * 1-5');
     });
 
@@ -81,7 +81,7 @@ describe('cron-builder', function () {
 
     it('gets a single value', function () {
         cron = new cb();
-        cron.set(['30'], 'minute');
+        cron.set('minute', ['30']);
         expect(cron.get('minute')).to.equal('30');
     });
 
@@ -97,7 +97,7 @@ describe('cron-builder', function () {
         expect(getAllResponse).to.have.property('minute').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
         expect(getAllResponse).to.have.property('hour').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
         expect(getAllResponse).to.have.property('dayOfTheMonth').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
-        expect(getAllResponse).to.have.property('monthOfTheYear').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
+        expect(getAllResponse).to.have.property('month').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
         expect(getAllResponse).to.have.property('dayOfTheWeek').that.is.an('array').with.deep.property('[0]').that.deep.equals('*');
     });
 
@@ -105,7 +105,7 @@ describe('cron-builder', function () {
         cron = new cb();
         var getAllResponse = cron.getAll();
         getAllResponse.hour = ['13'];
-        getAllResponse.monthOfTheYear = ['1-6'];
+        getAllResponse.month = ['1-6'];
         getAllResponse.dayOfTheWeek = ['1,3,5,7'];
         cron.setAll(getAllResponse);
         expect(cron.build()).to.equal('* 13 * 1-6 1,3,5,7');
@@ -127,23 +127,23 @@ describe('cron-builder', function () {
 
     it('adds a value to a measureOfTime that is set to "*"', function () {
         cron = new cb();
-        cron.addValue('5', 'minute');
+        cron.addValue('minute', '5');
         expect(cron.get('minute')).to.equal('5');
         expect(cron.build()).to.equal('5 * * * *');
     });
 
     it('adds a value to a measure of time that has been set to a number', function () {
         cron = new cb();
-        cron.addValue('5', 'hour');
-        cron.addValue('10', 'hour');
+        cron.addValue('hour', '5');
+        cron.addValue('hour', '10');
         expect(cron.get('hour')).to.equal('5,10');
     });
 
     it('validates duplicate values', function () {
         cron = new cb();
-        cron.addValue('5', 'dayOfTheMonth');
-        cron.addValue('15', 'dayOfTheMonth');
-        cron.addValue('5', 'dayOfTheMonth');
+        cron.addValue('dayOfTheMonth', '5');
+        cron.addValue('dayOfTheMonth', '15');
+        cron.addValue('dayOfTheMonth', '5');
         expect(cron.get('dayOfTheMonth')).to.equal('5,15');
     });
 
@@ -154,16 +154,16 @@ describe('cron-builder', function () {
 
     it('removes a value that exists with other values', function () {
         cron = new cb();
-        cron.set(['2', '4'], 'dayOfTheWeek');
-        cron.removeValue('4', 'dayOfTheWeek');
+        cron.set('dayOfTheWeek', ['2', '4']);
+        cron.removeValue('dayOfTheWeek', '4');
         expect(cron.get('dayOfTheWeek')).to.equal('2');
     });
 
     it('resets the value to the default "*" when removing the only value', function () {
         cron = new cb();
-        cron.set(['7'], 'minute');
+        cron.set('minute', ['7']);
         expect(cron.get('minute')).to.equal('7');
-        cron.removeValue('7', 'minute');
+        cron.removeValue('minute', '7');
         expect(cron.get('minute')).to.equal('*');
     });
 
