@@ -10,7 +10,7 @@ var CronValidator = (function() {
 
         for (var measureOfTime in expression) {
             if (expression.hasOwnProperty(measureOfTime)) {
-                this.validateValue(expression[measureOfTime], measureOfTime);
+                this.validateValue(measureOfTime, expression[measureOfTime]);
             }
         }
     },
@@ -30,11 +30,11 @@ var CronValidator = (function() {
         }
 
         for (var i = 0; i < splitExpression.length; i++) {
-            this.validateValue(splitExpression[i], measureOfTimeMap[i]);
+            this.validateValue(measureOfTimeMap[i], splitExpression[i]);
         }
     },
 
-    validateValue = function(value, measureOfTime) {
+    validateValue = function(measureOfTime, value) {
         var validatorObj = {
                 minute: {min: 0, max: 59},
                 hour: {min: 0, max: 23},
@@ -121,8 +121,8 @@ CronBuilder.prototype.build = function () {
     ].join(' ');
 };
 
-CronBuilder.prototype.addValue = function (value, measureOfTime) {
-    CronValidator.validateValue(value, measureOfTime);
+CronBuilder.prototype.addValue = function (measureOfTime, value) {
+    CronValidator.validateValue(measureOfTime, value);
 
     if (this.expression[measureOfTime].length === 1 && this.expression[measureOfTime][0] === '*') {
         this.expression[measureOfTime] = [value];
@@ -133,7 +133,7 @@ CronBuilder.prototype.addValue = function (value, measureOfTime) {
     }
 };
 
-CronBuilder.prototype.removeValue = function (value, measureOfTime) {
+CronBuilder.prototype.removeValue = function (measureOfTime, value) {
     if (!this.expression[measureOfTime]) {
         throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "month", & "dayOfTheWeek".');
     }
@@ -159,13 +159,13 @@ CronBuilder.prototype.get = function (measureOfTime) {
     return this.expression[measureOfTime].join(',');
 };
 
-CronBuilder.prototype.set = function (value, measureOfTime) {
+CronBuilder.prototype.set = function (measureOfTime, value) {
     if (!Array.isArray(value)) {
         throw new Error('Invalid value; Value must be in the form of an Array.');
     }
 
     for(var i = 0; i < value.length; i++) {
-        CronValidator.validateValue(value[i], measureOfTime);
+        CronValidator.validateValue(measureOfTime, value[i]);
     }
 
     this.expression[measureOfTime] = value;
