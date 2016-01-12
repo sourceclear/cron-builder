@@ -2,7 +2,7 @@
 # cron-builder
 The software utility *cron* is a time-based scheduler in Unix-like computer operating systems. A user may use cron to schedule jobs (commands or scripts) to run periodically at fixed times, dates, or intervals. A cron statement is composed of 5 fields separated by white space. The `*` character translates to "every", ie: "every minute" or "every day of the week". 
 
-cron-builder will manage the state of a cron expression allowing a user to manipulate it through a simple API. It is decoupled from the DOM and doesn't have an opinion about where it's being called from. cron-builder considers [this article](https://en.wikipedia.org/wiki/Cron) it's source of truth. 
+cron-builder will manage the state of a cron expression, allowing a user to manipulate it through a simple API. It is decoupled from the DOM and doesn't have an opinion about where it's being called from. cron-builder considers [this article](https://en.wikipedia.org/wiki/Cron) its source of truth. 
 
 ### Install
 cron-builder is available on npm and bower:
@@ -50,7 +50,7 @@ cronExp.build();
 // '5,35 * * * *'
 ```
 
-Or if you'd prefer to dd or remove values one at a time, use `addValue` and `removeValue`. These methods build or take away from what is currently set:
+Or if you'd prefer to add or remove values one at a time, use `addValue` and `removeValue`. These methods build or take away from what is currently set:
 ```JavaScript
 cronExp.addValue('hour', '2');
 cronExp.addValue('monthOfTheYear', '4');
