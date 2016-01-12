@@ -2,6 +2,17 @@ var DEFAULT_INTERVAL = ['*'];
 
 var CronValidator = (function() {
 
+    /**
+     * validates a given cron expression (object) for length, then calls validateValue on each value
+     * @param {!{
+        minute: Array.string,
+        hour: Array.string,
+        dayOfTheMonth: Array.string,
+        month: Array.string,
+        dayOfTheWeek: Array.string,
+     * }} expression - rich object containing the state of the cron expression
+     * @throws {Error} if expression contains more than 5 keys
+     */
     var validateExpression = function(expression) {
         // don't care if it's less than 6, we'll just set those to the default '*'
         if (Object.keys(expression).length > 6) {
@@ -15,6 +26,11 @@ var CronValidator = (function() {
         }
     },
 
+    /**
+     * validates a given cron expression (string) for length, then calls validateValue on each value
+     * @param {!String} expression - an optionally empty string containing at most 5 space delimited expressions.
+     * @throws {Error} if the string contains more than 5 space delimited parts.
+     */
     validateString = function(expression) {
         var measureOfTimeMap = {
                 0: 'minute',
@@ -34,6 +50,13 @@ var CronValidator = (function() {
         }
     },
 
+    /**
+     * validates any given measureOfTime and corresponding value
+     * @param {!String} measureOfTime - as expected
+     * @param {!String} value - the cron-ish interval specifier
+     * @throws {Error} if measureOfTime is bogus
+     * @throws {Error} if value contains an unsupported character
+     */
     validateValue = function(measureOfTime, value) {
         var validatorObj = {
                 minute: {min: 0, max: 59},
@@ -85,6 +108,13 @@ var CronValidator = (function() {
     }
 }());
 
+
+/**
+ * Initializes a CronBuilder with an optional initial cron expression.
+ * @param {String=} initialExpression - if provided, it must be up to 5 space delimited parts
+ * @throws {Error} if the initialExpression is bogus
+ * @constructor
+ */
 var CronBuilder = function(initialExpression) {
     var splitExpression;
     if (initialExpression) {
@@ -111,6 +141,10 @@ var CronBuilder = function(initialExpression) {
     }
 }
 
+/**
+ * builds a working cron expression based on the state of the cron object
+ * @returns {string} - working cron expression
+ */
 CronBuilder.prototype.build = function () {
     return [
         this.expression.minute.join(','),
@@ -121,6 +155,12 @@ CronBuilder.prototype.build = function () {
     ].join(' ');
 };
 
+/**
+ * adds a value to what exists currently (builds)
+ * @param {!String} measureOfTime
+ * @param {!Number} value
+ * @throws {Error} if measureOfTime or value fail validation
+ */
 CronBuilder.prototype.addValue = function (measureOfTime, value) {
     CronValidator.validateValue(measureOfTime, value);
 
@@ -133,6 +173,12 @@ CronBuilder.prototype.addValue = function (measureOfTime, value) {
     }
 };
 
+/**
+ * removes a single explicit value (subtracts)
+ * @param {!String} measureOfTime - as you might guess
+ * @param {!String} value - the offensive value
+ * @throws {Error} if measureOfTime is bogus.
+ */
 CronBuilder.prototype.removeValue = function (measureOfTime, value) {
     if (!this.expression[measureOfTime]) {
         throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "month", & "dayOfTheWeek".');
@@ -151,6 +197,12 @@ CronBuilder.prototype.removeValue = function (measureOfTime, value) {
     }
 };
 
+/**
+ * returns the current state of a given measureOfTime
+ * @param {!String} measureOfTime one of "minute", "hour", etc
+ * @returns {!String} comma separated blah blah
+ * @throws {Error} if the measureOfTime is not one of the permitted values.
+ */
 CronBuilder.prototype.get = function (measureOfTime) {
     if (!this.expression[measureOfTime]) {
         throw new Error('Invalid measureOfTime: Valid options are: "minute", "hour", "dayOfTheMonth", "month", & "dayOfTheWeek".');
@@ -159,6 +211,14 @@ CronBuilder.prototype.get = function (measureOfTime) {
     return this.expression[measureOfTime].join(',');
 };
 
+/**
+ * sets the state of a given measureOfTime
+ * @param {!String} measureOfTime - yup
+ * @param {!Array.<String>} value - the 5 tuple array of values to set
+ * @returns {!String} the comma separated version of the value that you passed in
+ * @throws {Error} if your "value" is not an Array&lt;String&gt;
+ * @throws {Error} when any item in your value isn't a legal cron-ish descriptor
+ */
 CronBuilder.prototype.set = function (measureOfTime, value) {
     if (!Array.isArray(value)) {
         throw new Error('Invalid value; Value must be in the form of an Array.');
@@ -173,10 +233,31 @@ CronBuilder.prototype.set = function (measureOfTime, value) {
     return this.expression[measureOfTime].join(',');
 };
 
+/**
+ * Returns a rich object that describes the current state of the cron expression.
+ * @returns {!{
+    minute: Array.string,
+    hour: Array.string,
+    dayOfTheMonth: Array.string,
+    month: Array.string,
+    dayOfTheWeek: Array.string,
+ * }}
+ */
 CronBuilder.prototype.getAll = function () {
     return this.expression;
 };
 
+/**
+ * sets the state for the entire cron expression
+ * @param {!{
+    minute: Array.string,
+    hour: Array.string,
+    dayOfTheMonth: Array.string,
+    month: Array.string,
+    dayOfTheWeek: Array.string,
+ * }} expToSet - the entirety of the cron expression.
+ * @throws {Error} as usual
+ */
 CronBuilder.prototype.setAll = function (expToSet) {
     CronValidator.validateExpression(expToSet);
 
