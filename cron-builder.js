@@ -34,8 +34,8 @@ var CronValidator = (function() {
      * @throws {Error} if expression contains more than 5 keys
      */
     var validateExpression = function(expression) {
-        // don't care if it's less than 6, we'll just set those to the default '*'
-        if (Object.keys(expression).length > 6) {
+        // don't care if it's less than 5, we'll just set those to the default '*'
+        if (Object.keys(expression).length > 5) {
             throw new Error('Invalid cron expression; limited to 5 values.');
         }
 
@@ -54,7 +54,7 @@ var CronValidator = (function() {
     validateString = function(expression) {
         var splitExpression = expression.split(' ');
 
-        if (splitExpression.length > 6) {
+        if (splitExpression.length > 5) {
             throw new Error('Invalid cron expression; limited to 5 values.');
         }
 
