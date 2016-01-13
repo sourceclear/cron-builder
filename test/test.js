@@ -14,6 +14,19 @@ describe('cron-builder', function () {
         expect(cron.get('dayOfTheWeek')).to.equal('*');
     });
 
+    it('protects against the user accessing the expression directly', function () {
+        cron = new cb();
+        expect(cron.minute).to.not.eql(['*']);
+        expect(cron.hour).to.be.undefined;
+    });
+
+    it('protects against the user manipulating the expression directly', function () {
+        cron = new cb();
+        cron.minute = ['5'];
+        expect(cron.get('minute')).to.not.equal('5');
+        expect(cron.get('minute')).to.equal('*');
+    });
+
     it('returns a working cron expression when calling .build()', function () {
         expect(cron.build()).to.equal('* * * * *');
     });
