@@ -157,17 +157,21 @@ var CronBuilder = function(initialExpression) {
         };
     }
 
+    var _getExpression = function() {
+        return _expression;
+    }
+
     /**
      * builds a working cron expression based on the state of the cron object
      * @returns {string} - working cron expression
      */
     var build = function() {
         return [
-            _expression.minute.join(','),
-            _expression.hour.join(','),
-            _expression.dayOfTheMonth.join(','),
-            _expression.month.join(','),
-            _expression.dayOfTheWeek.join(','),
+            _getExpression().minute.join(','),
+            _getExpression().hour.join(','),
+            _getExpression().dayOfTheMonth.join(','),
+            _getExpression().month.join(','),
+            _getExpression().dayOfTheWeek.join(','),
         ].join(' ');
     };
 
@@ -180,11 +184,11 @@ var CronBuilder = function(initialExpression) {
     var addValue = function(measureOfTime, value) {
         CronValidator.validateValue(measureOfTime, value);
 
-        if (_expression[measureOfTime].length === 1 && _expression[measureOfTime][0] === '*') {
-            _expression[measureOfTime] = [value];
+        if (_getExpression()[measureOfTime].length === 1 && _getExpression()[measureOfTime][0] === '*') {
+            _getExpression()[measureOfTime] = [value];
         } else {
-            if (_expression[measureOfTime].indexOf(value) < 0) {
-                _expression[measureOfTime].push(value);
+            if (_getExpression()[measureOfTime].indexOf(value) < 0) {
+                _getExpression()[measureOfTime].push(value);
             }
         }
     };
@@ -196,19 +200,19 @@ var CronBuilder = function(initialExpression) {
      * @throws {Error} if measureOfTime is bogus.
      */
     var removeValue = function (measureOfTime, value) {
-        if (!_expression[measureOfTime]) {
+        if (!_getExpression()[measureOfTime]) {
             throw new Error('Invalid measureOfTime: Valid options are: ' + CronValidator.measureOfTimeValues.join(', '));
         }
 
-        if (_expression[measureOfTime].length === 1 && _expression[measureOfTime][0] === '*') {
+        if (_getExpression()[measureOfTime].length === 1 && _getExpression()[measureOfTime][0] === '*') {
             return 'The value for "' + measureOfTime + '" is already at the default value of "*" - this is a no-op.';
         }
 
-        _expression[measureOfTime] = _expression[measureOfTime].filter(function (timeValue) {
+        _getExpression()[measureOfTime] = _getExpression()[measureOfTime].filter(function (timeValue) {
            return value !== timeValue;
         });
 
-        if (!_expression[measureOfTime].length) {
+        if (!_getExpression()[measureOfTime].length) {
             _expression[measureOfTime] = DEFAULT_INTERVAL;
         }
     };
@@ -220,11 +224,11 @@ var CronBuilder = function(initialExpression) {
      * @throws {Error} if the measureOfTime is not one of the permitted values.
      */
     var get = function (measureOfTime) {
-        if (!_expression[measureOfTime]) {
+        if (!_getExpression()[measureOfTime]) {
             throw new Error('Invalid measureOfTime: Valid options are: ' + CronValidator.measureOfTimeValues.join(', '));
         }
 
-        return _expression[measureOfTime].join(',');
+        return _getExpression()[measureOfTime].join(',');
     };
 
     /**
@@ -260,7 +264,7 @@ var CronBuilder = function(initialExpression) {
      * }}
      */
     var getAll = function () {
-        return _expression;
+        return _getExpression();
     };
 
     /**
