@@ -2,7 +2,7 @@
   "name": "cron-builder",
   "main": "cron-builder.js",
   "version": "0.1.0",
-  "homepage": "https://github.com/waneka/cron-builder",
+  "homepage": "https://github.com/srcclr/cron-builder",
   "authors": [
     "waneka <twwaneka@gmail.com>"
   ],

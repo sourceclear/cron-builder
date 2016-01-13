@@ -5,6 +5,10 @@
   "version": "0.1.0",
   "main": "cron-builder.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/srcclr/cron-builder.git"
+  },
   "devDependencies": {
     "chai": "^3.4.1",
     "mocha": "^2.3.4"

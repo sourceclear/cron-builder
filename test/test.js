@@ -7,11 +7,24 @@ describe('cron-builder', function () {
 
     it('defaults to "* * * * *" when initialized without arguments', function () {
         cron = new cb();
-        expect(cron.expression.minute).to.eql(['*']);
-        expect(cron.expression.hour).to.eql(['*']);
-        expect(cron.expression.dayOfTheMonth).to.eql(['*']);
-        expect(cron.expression.month).to.eql(['*']);
-        expect(cron.expression.dayOfTheWeek).to.eql(['*']);
+        expect(cron.get('minute')).to.equal('*');
+        expect(cron.get('hour')).to.equal('*');
+        expect(cron.get('dayOfTheMonth')).to.equal('*');
+        expect(cron.get('month')).to.equal('*');
+        expect(cron.get('dayOfTheWeek')).to.equal('*');
+    });
+
+    it('protects against the user accessing the expression directly', function () {
+        cron = new cb();
+        expect(cron.minute).to.not.eql(['*']);
+        expect(cron.hour).to.be.undefined;
+    });
+
+    it('protects against the user manipulating the expression directly', function () {
+        cron = new cb();
+        cron.minute = ['5'];
+        expect(cron.get('minute')).to.not.equal('5');
+        expect(cron.get('minute')).to.equal('*');
     });
 
     it('returns a working cron expression when calling .build()', function () {
