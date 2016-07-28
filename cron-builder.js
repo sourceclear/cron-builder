@@ -281,6 +281,8 @@ var CronBuilder = (function() {
         };
     }
 
+    console.log('huzzah!!');
+
     return CronBuilder;
 }());
 
