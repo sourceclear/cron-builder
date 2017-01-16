@@ -76,7 +76,7 @@ var CronValidator = (function() {
                 hour:          {min: 0, max: 23},
                 dayOfTheMonth: {min: 1, max: 31},
                 month:         {min: 1, max: 12},
-                dayOfTheWeek:  {min: 1, max: 7}
+                dayOfTheWeek:  {min: 0, max: 7}
             },
             range,
             validChars = /^[0-9*-]/;
