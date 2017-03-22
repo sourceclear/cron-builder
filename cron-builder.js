@@ -41,7 +41,7 @@ var CronValidator = (function() {
 
         for (var measureOfTime in expression) {
             if (expression.hasOwnProperty(measureOfTime)) {
-                this.validateValue(measureOfTime, expression[measureOfTime]);
+                this.validateValue(measureOfTime, expression[measureOfTime][0]);
             }
         }
     },
