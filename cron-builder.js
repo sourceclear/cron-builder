@@ -89,6 +89,14 @@ var CronValidator = (function() {
             throw new Error('Invalid value; Only numbers 0-9, "-", and "*" chars are allowed');
         }
 
+        if (!measureOfTime || !value) {
+            throw new Error('Missing arguments; Both measureOfTime and value are required arguments');
+        }
+
+        if (typeof(value) !== 'string') {
+            throw new Error('value argument must be a string');
+        }
+
         if (value !== '*') {
             // check to see if value is within range if value is not '*'
             if (value.indexOf('-') >= 0) {
@@ -102,7 +110,6 @@ var CronValidator = (function() {
                     throw new Error('Invalid value; top of range is not valid for "' + measureOfTime + '". Limit is ' + validatorObj[measureOfTime].max + '.');
                 }
             } else {
-
                 if (parseInt(value) < validatorObj[measureOfTime].min) {
                     throw new Error('Invalid value; given value is not valid for "' + measureOfTime + '". Minimum value is "' + validatorObj[measureOfTime].min + '".');
                 }
@@ -112,7 +119,6 @@ var CronValidator = (function() {
             }
         }
     };
-
 
     return {
         measureOfTimeValues: MeasureOfTimeValues,
