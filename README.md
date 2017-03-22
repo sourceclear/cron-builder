@@ -38,6 +38,11 @@ cronExp.build();
 // '* * * * *'
 ```
 
+The cron values are stored with the following keys, which must match identically when getting and setting:
+```JavaScript
+'minute', 'hour', 'dayOfTheMonth', 'month', 'dayOfTheWeek'
+```
+
 API includes basic getters and setters:
 ```JavaScript
 cronExp.get('minute');
